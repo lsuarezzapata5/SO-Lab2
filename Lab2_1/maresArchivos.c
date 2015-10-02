@@ -16,8 +16,10 @@ typedef struct {
 int num;
 int numeroMaterias(FILE *file);
 void getDatos(int n, strMateria (*_materias)[num], FILE *file);
-int getMateriasGanadas(int n, strMateria (*_materias)[num], int *ganadas[num]);
-
+int getMateriasGanadas(int n, strMateria (*_materias)[num], char *ganadas);
+int getMateriasPerdidas(int n, strMateria (*_materias)[num], char  *perdidas);
+float getPromedio(int n,strMateria (*_materias)[num] );
+void imprimirMaterias(int n, strMateria (*_materias)[num] );
 int main(int argc, char const *argv[])
 {	
 	int ch;
@@ -30,9 +32,11 @@ int main(int argc, char const *argv[])
 	in_fileE=fopen(entrada,"r");
 	in_fileS=fopen(salida, "w");
 	strMateria (*materias)[DEFAULT];//estatico
-	int *ganadas[100];
-	char (*perdidas)[NUMMAXCHAR];
+	char *ganadas;
+	char *perdidas;
 	int numeroGanadas=0;
+	int numeroPerdidas=0;
+	float promedio=0;
 
 	
 	if(argc!=3){
@@ -50,10 +54,10 @@ int main(int argc, char const *argv[])
 		exit(8);
 	}
 	num=numeroMaterias(in_fileE);
-	//Reservar memoria dinamica para el materias que apunta a un arreglo de strMateria
+	//Reservar memoria dinamica 
 	materias=  (strMateria (*)[num]) malloc(sizeof(strMateria[num]));
-	ganadas= (int *[num])malloc(sizeof(int[num]));
-
+	ganadas= (char *)malloc(sizeof(char)*num);
+	perdidas=(char *)malloc(sizeof(char)*num);
 	//Escribir el encabezado del archivo de salida
 	fprintf(in_fileS,"Materia | Nota | Creditos \n");
 
@@ -63,13 +67,24 @@ int main(int argc, char const *argv[])
 	//llamado a la funcion para obtener el numero de materias ganadas
 	numeroGanadas=getMateriasGanadas(num, materias, ganadas);
 
+	//llamado a la funcion para obtener el numero de materias perdidas
+	numeroPerdidas=getMateriasPerdidas(num, materias,ganadas);
 	
+	//llamado a la funcion para obtener el promedio
+	promedio=getPromedio(num, materias);
 
+	//Llamado a la funcion para que imprima las amterias con sus respectivos atributos
+	imprimirMaterias(num, materias);
 	//Escribe en el archivo de salida el total de materias
 	printf("Total Materias: %d\n", num);
 	//Escribe en el archivo de salida el total de materias ganadas
 	printf("Numero de materias Ganadas: %d\n", numeroGanadas );
+	//Escribe en el archivo de salida el total de materias perdidas
+	printf("Numero de materias Perdidas: %d\n", numeroPerdidas );
+	//Escribe en el archivo de salida el promedio
+	printf("Promedio ponderado: %.2f\n", promedio );
 
+	
 	fclose(in_fileE);
 	fclose(in_fileS);
 
@@ -93,34 +108,34 @@ int numeroMaterias(FILE *file){
 
 void getDatos(int n, strMateria (*_materias)[num], FILE *file){
 	int i;
-	strMateria *materias;
+	strMateria *materia;
 	for (i=0; i<n;i++){
-		materias=(strMateria *)(_materias+i);
+		materia=(strMateria *)(_materias+i);
 			
-		fscanf(file, "%s", materias->nombre);
-		printf("%s\n",  (char *)materias->nombre);
+		fscanf(file, "%s", materia->nombre);
+		//printf("%s\n",  (char *)materia->nombre);
 
-		fscanf(file, "%f", &materias->nota);
-		printf("%f\n",  materias->nota);
+		fscanf(file, "%f", &materia->nota);
+		//printf("%f\n",  materia->nota);
 
-		fscanf(file, "%d", &materias->creditos);
-		printf("%d\n",  materias->creditos);		
+		fscanf(file, "%d", &materia->creditos);
+		//printf("%d\n",  materia->creditos);		
 
-		materias++;
+		materia++;
 	}
 
 }
 
-int getMateriasGanadas(int n, strMateria (*_materias)[num], int *ganadas[num]){
+int getMateriasGanadas(int n, strMateria (*_materias)[num], char  *ganadas){
 	int i;
-	strMateria *materias;
+	strMateria *materia;
 	int nGanadas=0;
 	int nota;
 	for (i=0; i<n;i++){
-		materias=(strMateria *)(_materias+i);
-		nota=materias->nota;
+		materia=(strMateria *)(_materias+i);
+		nota=materia->nota;
 		if(nota>=3){
-			//&(ganadas+nGanadas)=materias->nombre;
+			sscanf(ganadas+nGanadas, "%s", materia->nombre);
 			nGanadas++;
 		}
 		
@@ -128,4 +143,47 @@ int getMateriasGanadas(int n, strMateria (*_materias)[num], int *ganadas[num]){
 	}
 	return nGanadas;
 
+}
+
+int getMateriasPerdidas(int n, strMateria (*_materias)[num], char  *perdidas){
+	int i;
+	strMateria *materia;
+	int nPerdidas=0;
+	int nota;
+	for (i=0; i<n;i++){
+		materia=(strMateria *)(_materias+i);
+		nota=materia->nota;
+		if(nota<3){
+			sscanf(perdidas+nPerdidas, "%s", materia->nombre);
+			nPerdidas++;
+		}
+		
+				
+	}
+	return nPerdidas;
+
+}
+
+float getPromedio(int n,strMateria (*_materias)[num] ){
+	int totalCreditos=0;
+	int suma=0;
+	int i;
+	strMateria *materia;
+	for (i=0; i<n;i++){
+		materia=(strMateria *)(_materias+i);
+		suma+=((materia->nota)*(materia->creditos));
+		totalCreditos+=materia->creditos;
+				
+	}
+
+	return (suma/totalCreditos);
+}
+void imprimirMaterias(int n, strMateria (*_materias)[num] ){
+	printf("MATERIA  | NOTA  |CREDITOS\n");
+	int i;
+	strMateria *materia;
+	for (i=0; i<n;i++){
+		materia=(strMateria *)(_materias+i);
+		printf("%-8s | %-6.2f| %d\n", materia->nombre, materia->nota, materia->creditos );
+	}
 }
