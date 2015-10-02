@@ -45,7 +45,8 @@ int main(int argc, char const *argv[])
 		exit(8);
 	}
 	num=numeroMaterias(in_fileE);
-	printf("%d\n", sizeof(strMateria) );
+	
+	printf("Tamaño estructura: %d\n ", sizeof(strMateria) );
 //nombreMateria = (char(*)[numMaxNombre]) malloc(sizeof(char[numMaxNombre])*n);
 	//materias=  (strMateria(*)[num]) malloc(sizeof(strMateria[num])*n);
 /*
