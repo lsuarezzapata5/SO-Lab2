@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
-#define numMaxChar 20
+#define NUMMAXCHAR 20
+#define DEFAULT 100
+
 
 typedef unsigned int uint;
 
 typedef struct {
-	char nombre[numMaxChar];
+	char nombre[NUMMAXCHAR];
 	float nota;
 	uint creditos; 
 }strMateria;
@@ -14,22 +16,22 @@ typedef struct {
 int num;
 int numeroMaterias(FILE *file);
 void getDatos(int n, strMateria (*_materias)[num], FILE *file);
-int getMateriasGanadas(int n, strMateria (*_materias)[num], char (*ganadas)[numMaxChar]);
+int getMateriasGanadas(int n, strMateria (*_materias)[num], int *ganadas[num]);
 
 int main(int argc, char const *argv[])
 {	
 	int ch;
 	FILE *in_fileE;
 	FILE *in_fileS;
-	char entrada[numMaxChar];
-	char salida[numMaxChar];
+	char entrada[NUMMAXCHAR];
+	char salida[NUMMAXCHAR];
 	strcpy(entrada, argv[1]);
 	strcpy(salida, argv[2]);
 	in_fileE=fopen(entrada,"r");
 	in_fileS=fopen(salida, "w");
-	strMateria (*materias)[100];//estatico
-	char (*ganadas)[numMaxChar];
-	char (*perdidas)[numMaxChar];
+	strMateria (*materias)[DEFAULT];//estatico
+	int *ganadas[100];
+	char (*perdidas)[NUMMAXCHAR];
 	int numeroGanadas=0;
 
 	
@@ -50,7 +52,8 @@ int main(int argc, char const *argv[])
 	num=numeroMaterias(in_fileE);
 	//Reservar memoria dinamica para el materias que apunta a un arreglo de strMateria
 	materias=  (strMateria (*)[num]) malloc(sizeof(strMateria[num]));
-	
+	ganadas= (int *[num])malloc(sizeof(int[num]));
+
 	//Escribir el encabezado del archivo de salida
 	fprintf(in_fileS,"Materia | Nota | Creditos \n");
 
@@ -77,10 +80,10 @@ int main(int argc, char const *argv[])
 
 int numeroMaterias(FILE *file){
 	int num = 0;
-	char buffer[numMaxChar];
+	char buffer[NUMMAXCHAR];
 	while(!feof(file)){
-		fgets(buffer, numMaxChar, file);
-		//fgets lee una cadena de caracteres de tamaño numMaxChar
+		fgets(buffer, NUMMAXCHAR, file);
+		//fgets lee una cadena de caracteres de tamaño NUMMAXCHAR
 		//si le pongo un tamaño de 1 tambien me cuenta el numero de lineas
 		num++;
 	}	
@@ -108,7 +111,7 @@ void getDatos(int n, strMateria (*_materias)[num], FILE *file){
 
 }
 
-int getMateriasGanadas(int n, strMateria (*_materias)[num], char (*ganadas)[numMaxChar]){
+int getMateriasGanadas(int n, strMateria (*_materias)[num], int *ganadas[num]){
 	int i;
 	strMateria *materias;
 	int nGanadas=0;
@@ -117,7 +120,7 @@ int getMateriasGanadas(int n, strMateria (*_materias)[num], char (*ganadas)[numM
 		materias=(strMateria *)(_materias+i);
 		nota=materias->nota;
 		if(nota>=3){
-			&(ganadas+nGanadas)=materias->nombre;
+			//&(ganadas+nGanadas)=materias->nombre;
 			nGanadas++;
 		}
 		
