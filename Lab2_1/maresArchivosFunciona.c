@@ -20,8 +20,6 @@ int getMateriasGanadas(int n, strMateria (*_materias)[num], char *ganadas);
 int getMateriasPerdidas(int n, strMateria (*_materias)[num], char  *perdidas);
 float getPromedio(int n,strMateria (*_materias)[num] );
 void imprimirMaterias(int n, strMateria (*_materias)[num], FILE *in_fileS );
-void imprimirGP(int n, strMateria (*_materias)[num],FILE *in_fileS, char  *apuntador );
-
 int main(int argc, char const *argv[])
 {	
 	int ch;
@@ -66,8 +64,6 @@ int main(int argc, char const *argv[])
 
 	//llamado a la funcion para obtener el numero de materias ganadas
 	numeroGanadas=getMateriasGanadas(num, materias, ganadas);
-	fprintf(in_fileS, "Materias perdidas: \n" );
-	//imprimirGP(num, materias, in_fileS, ganadas );
 
 	//llamado a la funcion para obtener el numero de materias perdidas
 	numeroPerdidas=getMateriasPerdidas(num, materias,ganadas);
@@ -89,9 +85,6 @@ int main(int argc, char const *argv[])
 	
 	fclose(in_fileE);
 	fclose(in_fileS);
-	free(ganadas);
-	free(materias);
-	free(perdidas);
 
 	return 0;
 }
@@ -190,18 +183,6 @@ void imprimirMaterias(int n, strMateria (*_materias)[num],FILE *in_fileS ){
 	strMateria *materia;
 	for (i=0; i<n;i++){
 		materia=(strMateria *)(_materias+i);
-		fprintf(in_fileS,"%-8.8s | %-6.2f| %d\n", materia->nombre, materia->nota, materia->creditos );
-	}
-}
-
-void imprimirGP(int n, strMateria (*_materias)[num],FILE *in_fileS, char  *apuntador ){
-	int i;
-	int aux=0;
-	strMateria *materia;
-	for (i=0; i<n;i++){
-		aux=apuntador+i;
-		materia=(strMateria *)(_materias+aux);
-		fprintf(in_fileS, "%s\n", materia->nombre );
-				
+		fprintf(in_fileS,"%-8s | %-6.2f| %d\n", materia->nombre, materia->nota, materia->creditos );
 	}
 }
